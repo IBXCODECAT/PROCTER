@@ -29,7 +29,7 @@ public class GenerateTerrain : MonoBehaviour
         {
             for(int x = 0; x < heightMapWidth; x++)
             {
-                heights[x, z] = CalculateHeight(x, z); ;
+                heights[x, z] = CalculateHeight(x, z);
             }
         }
 
