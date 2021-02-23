@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Obsolete]
 public class GenerateTerrain : MonoBehaviour
 {
+    public static GenerateTerrain instance;
+
     public Terrain terrain;
     public TerrainData data;
 
@@ -12,36 +15,22 @@ public class GenerateTerrain : MonoBehaviour
     private int heightMapWidth;
     private int heightMapHeight;
 
-    [System.Obsolete]
-    void Start()
-    {
-        Generate();
-    }
+    public int seed;
 
-    [System.Obsolete]
-    void Generate()
-    {
-        heightMapWidth = data.heightmapWidth;
-        heightMapHeight = data.heightmapHeight;
-        float[,] heights = data.GetHeights(0, 0, heightMapWidth, heightMapHeight);
+    private int seedX;
+    private int seedZ;
 
-        for(int z = 0; z < heightMapHeight; z++)
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.F1))
         {
-            for(int x = 0; x < heightMapWidth; x++)
-            {
-                heights[x, z] = CalculateHeight(x, z);
-            }
+            Random.InitState(seed);
+
+            seedX = Random.Range(-32767314, 32767314);
+            seedZ = Random.Range(-32767314, 32767314);
+
+            Debug.Log("X: " + seedX + " Z: " + seedZ);
+            
         }
-
-        data.SetHeights(0, 0, heights);
     }
-
-    private float CalculateHeight(int x, int z)
-    {
-        float xCoord = (float)x / heightMapWidth * scale;
-        float zCoord = (float)z / heightMapHeight * scale;
-
-        return Mathf.PerlinNoise(xCoord, zCoord);
-    }
-
 }
