@@ -8,22 +8,22 @@ public static class NoiseMap
     public static int heightMapWidth;
     public static int heightMapHeight;
 
-    private static float[,] heights;
-    private static int scale;
-
-    public static float[,] GenerateMap(TerrainData data, int x, int z, int scale, int octaves, int seed)
+    public static float[,] GenerateMap(TerrainData data, float noiseScale, int octaves)
     {
-        Random.InitState(seed);
+        Random.InitState(Seed.finalSeed);
         heightMapWidth = data.heightmapWidth;
         heightMapHeight = data.heightmapHeight;
 
-        GenerateOctaves(data, octaves);
+        float[,] noise = AverageNoiseFromOctaves(data, octaves, noiseScale);
+        return noise;
     }
 
-    private static float[,] AverageNoiseFromOctaves(TerrainData data, int count)
+    private static float[,] AverageNoiseFromOctaves(TerrainData data, int count, float scale)
     {
+        int offset = Seed.InitStateGenerator(-32767, 32767);
+
         float[,] altitudes = data.GetHeights(0, 0, heightMapWidth, heightMapHeight); //Reset height data
-        List<float[,]> octaves = null; //Create a list of octaves
+        List<float[,]> octaves = new List<float[,]>() ; //Create a list of octaves
         octaves.Clear(); //Clear the octave list so a new list can be generated
 
         for (int i = 0; i < count; i++) //For each octave
@@ -35,36 +35,38 @@ public static class NoiseMap
                     float xCoord = ((float)x / heightMapWidth * scale);
                     float zCoord = ((float)z / heightMapHeight * scale);
 
-                    altitudes[x, z] = Mathf.PerlinNoise(xCoord, zCoord);
+                    altitudes[x, z] = Mathf.PerlinNoise(xCoord + offset, zCoord + offset);
                 }
             }
-
             octaves.Add(altitudes);
         }
 
         float[][,] octaveData = octaves.ToArray();
 
-        float[,] averageNoise = null; //Create 2D float array to be returned
+        float[,] averageNoise = new float[heightMapHeight, heightMapWidth];
 
-        for(int i = 0; i < count; i++)
+        for(int i = 0; i < octaves.Count; i++)
         {
-            for (int z = 0; z < octaves.Count; z++)
+            for (int z = 0; z < heightMapHeight; z++)
             {
-                for (int x = 0; x < octaves.Count; x++)
+                for (int x = 0; x < heightMapWidth; x++)
                 {
                     averageNoise[x, z] += octaveData[i][x, z]; //Add octaves starting average operation
                 }
             }
         }
 
-        for (int z = 0; z < octaves.Count; z++)
+        for (int z = 0; z < heightMapHeight; z++)
         {
-            for (int x = 0; x < octaves.Count; x++)
+            for (int x = 0; x < heightMapWidth; x++)
             {
-                averageNoise[x, z] = averageNoise[x / count, z / count]; //Divide Indexes finishing average operation
+                averageNoise[x, z] = averageNoise[x , z] / octaves.Count; //Divide Indexes finishing average operation
             }
         }
 
+        //Debug.Log("Start Point: " + averageNoise[0, 0] + "End Point: " + averageNoise[heightMapHeight - 1, heightMapWidth - 1]);
+
+        //Debug.Log(averageNoise.Length);
         return averageNoise;
     }
 }

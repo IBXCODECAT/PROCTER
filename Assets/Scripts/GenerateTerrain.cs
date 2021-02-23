@@ -12,10 +12,8 @@ public class GenerateTerrain : MonoBehaviour
 
     public float scale;
 
-    private int heightMapWidth;
-    private int heightMapHeight;
-
-    public int seed;
+    public string seed;
+    public int octaves;
 
     private int seedX;
     private int seedZ;
@@ -24,13 +22,13 @@ public class GenerateTerrain : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.F1))
         {
-            Random.InitState(seed);
-
-            seedX = Random.Range(-32767314, 32767314);
-            seedZ = Random.Range(-32767314, 32767314);
-
-            Debug.Log("X: " + seedX + " Z: " + seedZ);
-            
+            Generate();
         }
+    }
+
+    public void Generate()
+    {
+        Seed.SetExternalSeed(seed);
+        data.SetHeights(0, 0, NoiseMap.GenerateMap(data, scale, octaves)); ;
     }
 }

@@ -246,7 +246,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrain: {fileID: 1268842481}
   data: {fileID: 15600000, guid: 4ad603d8dfca1214da9f82612d72679c, type: 2}
-  scale: 1
+  scale: 2
+  seed: bob
+  octaves: 1
 --- !u!154 &1268842480
 TerrainCollider:
   m_ObjectHideFlags: 0
