@@ -13,26 +13,30 @@ public static class Seed
     public static void SetExternalSeed(string rawSeed) 
     {
         SetInternalSeed(rawSeed);
-        Debug.Log(seed);
+        Debug.Log("Seed String " + seed);
         SplitSeed();
     }
     
     public static void SplitSeed()
     {
+        seedContainer.Clear();
         int charIndex = 0;
+        finalSeed = 0;
 
         foreach(char seedComponent in seed)
         {
-            seedContainer.Add(seedComponent);
+            seedContainer.Add(seedComponent.GetHashCode());
 
-            Debug.Log("Sucsessfully converted " + seedComponent + " to " + seedContainer[charIndex] + " at index " + charIndex);
+            //Debug.Log("Sucsessfully converted " + seedComponent + " to " + seedContainer[charIndex] + " at index " + charIndex);
 
             charIndex++;
         }
 
-        generatedComponents = seedContainer.ToArray();
-
-        foreach(byte component in seedContainer) { finalSeed = finalSeed * 10 + component; }
+        foreach(byte component in seedContainer)
+        {
+            Debug.Log(component);
+            finalSeed += component;
+        }
 
         Debug.Log("Final Seed Generated: " + finalSeed);
     }

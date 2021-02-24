@@ -15,8 +15,7 @@ public class GenerateTerrain : MonoBehaviour
     public string seed;
     public int octaves;
 
-    private int seedX;
-    private int seedZ;
+    public float octaveLimit;
 
     void Update()
     {
@@ -29,6 +28,6 @@ public class GenerateTerrain : MonoBehaviour
     public void Generate()
     {
         Seed.SetExternalSeed(seed);
-        data.SetHeights(0, 0, NoiseMap.GenerateMap(data, scale, octaves)); ;
+        data.SetHeights(0, 0, NoiseMap.GenerateMap(data, scale, octaves, octaveLimit));
     }
 }
