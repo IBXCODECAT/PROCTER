@@ -8,7 +8,7 @@ public static class Seed
 
     public static List<int> seedContainer = new List<int>(); public static int[] generatedComponents;
 
-    public static int InitStateGenerator(float min, float max) { return Mathf.RoundToInt(Random.Range(min, max)); }
+    public static float InitStateGenerator(float min, float max) { return Random.Range(min, max); }
     public static void SetInternalSeed(string rawSeed) { seed = rawSeed; }
     public static void SetExternalSeed(string rawSeed) 
     {

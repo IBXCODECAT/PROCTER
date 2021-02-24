@@ -20,7 +20,7 @@ public static class NoiseMap
 
     private static float[,] AverageNoiseFromOctaves(TerrainData data, int count, float scale)
     {
-        int offset = Seed.InitStateGenerator(-32767, 32767);
+        float offset = Seed.InitStateGenerator(-32767f, 32767f);
 
         float[,] altitudes = data.GetHeights(0, 0, heightMapWidth, heightMapHeight); //Reset height data
         List<float[,]> octaves = new List<float[,]>() ; //Create a list of octaves
