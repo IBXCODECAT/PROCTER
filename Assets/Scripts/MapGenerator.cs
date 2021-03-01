@@ -28,27 +28,45 @@ public class MapGenerator : MonoBehaviour {
 	public TerrainType[] regions;
 
 	[Header("Physical Terrain")]
-	public TerrainData data;
+	
+	[HideInInspector] public TerrainData data;
 
 	float[,] noiseMap = { };
 
-	int mapChunkSize = 10;
+	public int mapChunkSize;
+	
+	[System.Serializable] public struct TerrainType
+	{
+		public string name;
+		public float height;
+		public Color colour;
+	}
 
-    private void Awake()
+	private void Awake()
+    {
+		data = GetComponent<TerrainData>();
+	}
+
+	public void GenerateMesh()
     {
 		mapChunkSize = data.heightmapResolution;
+		data.size = new Vector3(data.heightmapResolution, meshHeightMultiplier, data.heightmapResolution);
+
+		noiseMap = Noise.GenerateNoiseMap(mapChunkSize, mapChunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
+
+		data.SetHeights(0, 0, noiseMap);
 	}
 
     public void GenerateMap() {
 
-		noiseMap = Noise.GenerateNoiseMap (mapChunkSize, mapChunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
-
-		data.SetHeights(0, 0, noiseMap);
+		GenerateMesh();
 
 		Color[] colourMap = new Color[mapChunkSize * mapChunkSize];
 		for (int y = 0; y < mapChunkSize; y++) {
 			for (int x = 0; x < mapChunkSize; x++) {
+				
 				float currentHeight = noiseMap [x, y];
+				
 				for (int i = 0; i < regions.Length; i++) {
 					if (currentHeight <= regions [i].height) {
 						colourMap [y * mapChunkSize + x] = regions [i].colour;
@@ -66,13 +84,8 @@ public class MapGenerator : MonoBehaviour {
 		} else if (drawMode == DrawMode.Mesh) {
 			display.DrawMesh (MeshGenerator.GenerateTerrainMesh (noiseMap, meshHeightMultiplier, meshHeightCurve, levelOfDetail), TextureGenerator.TextureFromColourMap (colourMap, mapChunkSize, mapChunkSize));
 		} else if (drawMode == DrawMode.Physical) {
-
+			GenerateMesh();
         }
-	}
-
-	public void GeneratePhysical()
-	{
-		data.SetHeights(0, 0, noiseMap);
 	}
 
 	void OnValidate() {
@@ -83,11 +96,4 @@ public class MapGenerator : MonoBehaviour {
 			octaves = 0;
 		}
 	}
-}
-
-[System.Serializable]
-public struct TerrainType {
-	public string name;
-	public float height;
-	public Color colour;
 }
