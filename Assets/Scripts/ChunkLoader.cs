@@ -5,7 +5,9 @@ using System.Collections.Generic;
 public class ChunkLoader : MonoBehaviour
 {
 	public Transform parent;
-	public int renderDistance;
+
+	public const int renderDistance = 5;
+
 	public float updateSpeed;
 
 	public Transform reference;
@@ -20,17 +22,19 @@ public class ChunkLoader : MonoBehaviour
 	private int chunksGenerated = 0;
 
 	private	static List<GameObject> loadedChunks = new List<GameObject>();
-	private static List<GameObject> unLoadedChunks = new List<GameObject>();
+	private static List<GameObject> dumpedChunks = new List<GameObject>();
 
-	private bool[,] ChunkPosFetchable;
+	private static List<Vector3> chunksPos = new List<Vector3>();
 
-	private void Start()
-    {
-		StartCoroutine(Updater());
-    }
+	private void Start() { StartCoroutine(Updater()); }
 
+	
 	IEnumerator Updater()
     {
+		chunksPos.Clear();
+		loadedChunks.Clear();
+		dumpedChunks.Clear();
+
 		while(true)
         {
 			ChunkSystem();
@@ -40,30 +44,31 @@ public class ChunkLoader : MonoBehaviour
 
 	private void ChunkSystem()
     {
-
 		int viewerPositionX = Mathf.RoundToInt(viewerPosition.x);
 		int viewerPositionZ = Mathf.RoundToInt(viewerPosition.y);
 
 		GenerateNewChunks(viewerPositionX, viewerPositionZ);
-
 		UpdateChunkStates();
     }
 
 	private void GenerateNewChunks(int xAprox, int zAprox)
 	{
-		for (int x = -renderDistance + xAprox; x < renderDistance + xAprox; x++)
+		for (int x = 0; x < renderDistance * 2; x++)
 		{
-			for (int z = -renderDistance + zAprox; z < renderDistance + zAprox; z++)
+			for (int z = 0; z < renderDistance * 2; z++)
 			{
-				int posX = Mathf.RoundToInt(x * chunkDiameter);
-				int posZ = Mathf.RoundToInt(z * chunkDiameter);
+				int posX = Mathf.RoundToInt(x * chunkDiameter) + xAprox;
+				int posZ = Mathf.RoundToInt(z * chunkDiameter) + zAprox;
 
-				if (!ChunkPosFetchable[posX, posZ])
+				Debug.Log("Want to generate chunk at X = " + posX +  " Z = " + posZ);
+
+				if(!chunksPos.Contains(new Vector3(posX, elevation, posZ)))
                 {
-					Debug.Log("Generated New Chunk");
-					loadedChunks.Add(GenerateChunk(new Vector3(posX, elevation, posZ)));
+					GameObject thisChunk = GenerateChunk(new Vector3(posX, elevation, posZ));
+					chunksPos.Add(thisChunk.transform.position);
 
-					ChunkPosFetchable[posX, posZ] = true;
+					Debug.Log("Generated new chunk " + thisChunk);
+					chunksGenerated++;
 				}
 			}
 		}
@@ -80,7 +85,7 @@ public class ChunkLoader : MonoBehaviour
             }
         }
 
-		foreach(GameObject chunk in unLoadedChunks)
+		foreach(GameObject chunk in dumpedChunks)
         {
 			if(Vector3.Distance(viewerPosition, chunk.transform.position) < renderDistance)
             {
@@ -94,10 +99,14 @@ public class ChunkLoader : MonoBehaviour
 	{
 		TerrainData chunkData = new TerrainData();
 		chunkData.name = "Chunk Data (" + chunksGenerated + ")";
+
 		GameObject chunkObject = Terrain.CreateTerrainGameObject(chunkData);
 		MapGenerator chunkGenerator = chunkObject.AddComponent<MapGenerator>();
 
+		chunkObject.transform.position = pos;
+
 		chunkGenerator.data = chunkData;
+		chunkGenerator.GenerateMap();
 
 		chunkGenerator.GenerateMesh();
 		chunkDiameter = chunkGenerator.mapChunkSize;
@@ -108,15 +117,14 @@ public class ChunkLoader : MonoBehaviour
 	private void Load(GameObject chunk)
     {
 		loadedChunks.Add(chunk);
-		unLoadedChunks.Remove(chunk);
-		ChunkPosFetchable[Mathf.RoundToInt(chunk.transform.position.x), Mathf.RoundToInt(chunk.transform.position.z)] = true;
+		dumpedChunks.Remove(chunk);
 		chunk.SetActive(true);
     }
 
 	private void Dump(GameObject chunk)
 	{
 		loadedChunks.Remove(chunk);
-		unLoadedChunks.Add(chunk);
+		dumpedChunks.Add(chunk);
 		chunk.SetActive(false);
 	}
 	

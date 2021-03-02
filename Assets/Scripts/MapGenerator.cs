@@ -61,7 +61,7 @@ public class MapGenerator : MonoBehaviour {
 
 		GenerateMesh();
 
-		Color[] colourMap = new Color[mapChunkSize * mapChunkSize];
+		/*Color[] colourMap = new Color[mapChunkSize * mapChunkSize];
 		for (int y = 0; y < mapChunkSize; y++) {
 			for (int x = 0; x < mapChunkSize; x++) {
 				
@@ -85,7 +85,7 @@ public class MapGenerator : MonoBehaviour {
 			display.DrawMesh (MeshGenerator.GenerateTerrainMesh (noiseMap, meshHeightMultiplier, meshHeightCurve, levelOfDetail), TextureGenerator.TextureFromColourMap (colourMap, mapChunkSize, mapChunkSize));
 		} else if (drawMode == DrawMode.Physical) {
 			GenerateMesh();
-        }
+        }*/
 	}
 
 	void OnValidate() {
