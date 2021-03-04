@@ -6,7 +6,9 @@ public class ChunkLoader : MonoBehaviour {
 	public float renderDistance;
 	public Transform viewer;
 	[SerializeField] private GameObject chunk;
-	[SerializeField] private int chunkSize;
+
+	[SerializeField] private short chunkSize;
+
 	public static Vector2 viewerPosition;
 	int chunksVisableInRenderDistance;
 
@@ -61,7 +63,7 @@ public class ChunkLoader : MonoBehaviour {
 			//meshObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
 			meshObject =  Instantiate(chunk, Vector3.zero, Quaternion.identity);
 			meshObject.transform.position = positionV3;
-			//meshObject.transform.localScale = Vector3.one * size /10f;
+			//meshObject.transform.localScale = Vector3.one * size / 10f;
 			meshObject.transform.parent = parent;
 			SetVisible(false);
 		}
