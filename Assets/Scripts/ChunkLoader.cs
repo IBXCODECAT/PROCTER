@@ -2,130 +2,83 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ChunkLoader : MonoBehaviour
-{
-	public Transform parent;
-
-	public const int renderDistance = 5;
-
-	public float updateSpeed;
-
-	public Transform reference;
-
+public class ChunkLoader : MonoBehaviour {
+	public float renderDistance;
+	public Transform viewer;
+	[SerializeField] private GameObject chunk;
+	[SerializeField] private int chunkSize;
 	public static Vector2 viewerPosition;
+	int chunksVisableInRenderDistance;
 
-	public static MapGenerator mapGenerator;
-	private int chunkDiameter;
+	Dictionary<Vector2, TerrainChunk> terrainChunkDictionary = new Dictionary<Vector2, TerrainChunk>();
+	List<TerrainChunk> terrainChunksVisibleLastUpdate = new List<TerrainChunk>();
 
-	public float elevation = 0f;
+	void Start() {
+		chunksVisableInRenderDistance = Mathf.RoundToInt(renderDistance / chunkSize);
+	}
 
-	private int chunksGenerated = 0;
+	void Update() {
+		viewerPosition = new Vector2 (viewer.position.x, viewer.position.z);
+		UpdateVisibleChunks ();
+	}
+		
+	void UpdateVisibleChunks() {
 
-	private	static List<GameObject> loadedChunks = new List<GameObject>();
-	private static List<GameObject> dumpedChunks = new List<GameObject>();
-
-	private static List<Vector3> chunksPos = new List<Vector3>();
-
-	private void Start() { StartCoroutine(Updater()); }
-
-	
-	IEnumerator Updater()
-    {
-		chunksPos.Clear();
-		loadedChunks.Clear();
-		dumpedChunks.Clear();
-
-		while(true)
-        {
-			ChunkSystem();
-			yield return new WaitForSecondsRealtime(updateSpeed);
+		for (int i = 0; i < terrainChunksVisibleLastUpdate.Count; i++) {
+			terrainChunksVisibleLastUpdate [i].SetVisible (false);
 		}
-    }
+		terrainChunksVisibleLastUpdate.Clear ();
+			
+		int currentChunkCoordX = Mathf.RoundToInt (viewerPosition.x / chunkSize);
+		int currentChunkCoordY = Mathf.RoundToInt (viewerPosition.y / chunkSize);
 
-	private void ChunkSystem()
-    {
-		int viewerPositionX = Mathf.RoundToInt(viewerPosition.x);
-		int viewerPositionZ = Mathf.RoundToInt(viewerPosition.y);
+		for (int yOffset = -chunksVisableInRenderDistance; yOffset <= chunksVisableInRenderDistance; yOffset++) {
+			for (int xOffset = -chunksVisableInRenderDistance; xOffset <= chunksVisableInRenderDistance; xOffset++) {
+				Vector2 viewedChunkCoord = new Vector2 (currentChunkCoordX + xOffset, currentChunkCoordY + yOffset);
 
-		GenerateNewChunks(viewerPositionX, viewerPositionZ);
-		UpdateChunkStates();
-    }
-
-	private void GenerateNewChunks(int xAprox, int zAprox)
-	{
-		for (int x = 0; x < renderDistance * 2; x++)
-		{
-			for (int z = 0; z < renderDistance * 2; z++)
-			{
-				int posX = Mathf.RoundToInt(x * chunkDiameter) + xAprox;
-				int posZ = Mathf.RoundToInt(z * chunkDiameter) + zAprox;
-
-				Debug.Log("Want to generate chunk at X = " + posX +  " Z = " + posZ);
-
-				if(!chunksPos.Contains(new Vector3(posX, elevation, posZ)))
-                {
-					GameObject thisChunk = GenerateChunk(new Vector3(posX, elevation, posZ));
-					chunksPos.Add(thisChunk.transform.position);
-
-					Debug.Log("Generated new chunk " + thisChunk);
-					chunksGenerated++;
+				if (terrainChunkDictionary.ContainsKey (viewedChunkCoord)) {
+					terrainChunkDictionary [viewedChunkCoord].UpdateTerrainChunk (renderDistance);
+					if (terrainChunkDictionary [viewedChunkCoord].IsVisible ()) {
+						terrainChunksVisibleLastUpdate.Add (terrainChunkDictionary [viewedChunkCoord]);
+					}
+				} else {
+					terrainChunkDictionary.Add (viewedChunkCoord, new TerrainChunk (viewedChunkCoord, chunkSize, transform, chunk));
 				}
+
 			}
 		}
 	}
 
-	private void UpdateChunkStates()
-    {
-		foreach (GameObject chunk in loadedChunks)
-        {
-			if(Vector3.Distance(viewerPosition, chunk.transform.position) > renderDistance)
-            {
-				Dump(chunk);
-				Debug.Log("Dumped Chunk " + chunk, chunk);
-            }
-        }
+	public class TerrainChunk {
+		GameObject meshObject;
+		Vector2 position;
+		Bounds bounds;
+		public TerrainChunk(Vector2 coord, int size, Transform parent, GameObject chunk) {
+			position = coord * size;
+			bounds = new Bounds(position,Vector2.one * size);
+			Vector3 positionV3 = new Vector3(position.x,0,position.y);
 
-		foreach(GameObject chunk in dumpedChunks)
-        {
-			if(Vector3.Distance(viewerPosition, chunk.transform.position) < renderDistance)
-            {
-				Load(chunk);
-				Debug.Log("Loaded Chunk " + chunk, chunk);
-            }
-        }
-    }
+			//meshObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
+			meshObject =  Instantiate(chunk, Vector3.zero, Quaternion.identity);
+			meshObject.transform.position = positionV3;
+			//meshObject.transform.localScale = Vector3.one * size /10f;
+			meshObject.transform.parent = parent;
+			SetVisible(false);
+		}
 
-	private GameObject GenerateChunk(Vector3 pos)
-	{
-		TerrainData chunkData = new TerrainData();
-		chunkData.name = "Chunk Data (" + chunksGenerated + ")";
+		public void UpdateTerrainChunk(float renderDistance) {
+			float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance (viewerPosition));
+			bool visible = viewerDstFromNearestEdge <= renderDistance;
+			SetVisible (visible);
+		}
 
-		GameObject chunkObject = Terrain.CreateTerrainGameObject(chunkData);
-		MapGenerator chunkGenerator = chunkObject.AddComponent<MapGenerator>();
+		public void SetVisible(bool visible) {
+			meshObject.SetActive (visible);
+		}
 
-		chunkObject.transform.position = pos;
+		public bool IsVisible() {
+			return meshObject.activeSelf;
+		}
 
-		chunkGenerator.data = chunkData;
-		chunkGenerator.GenerateMap();
-
-		chunkGenerator.GenerateMesh();
-		chunkDiameter = chunkGenerator.mapChunkSize;
-
-		return chunkObject;
 	}
-
-	private void Load(GameObject chunk)
-    {
-		loadedChunks.Add(chunk);
-		dumpedChunks.Remove(chunk);
-		chunk.SetActive(true);
-    }
-
-	private void Dump(GameObject chunk)
-	{
-		loadedChunks.Remove(chunk);
-		dumpedChunks.Add(chunk);
-		chunk.SetActive(false);
-	}
-	
 }
