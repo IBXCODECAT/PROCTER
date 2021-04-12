@@ -1,5 +1,5 @@
 # PROCTER
-### Procedural Representations Objectifying Continuous Terrain and Enviroment Regions
+### Procedural Representations Objectifying Continuous Terrain & Enviroment Regions
 
 Read license file for legal information
 Repo is verified daily by IBX-depenabot
