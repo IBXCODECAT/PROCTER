@@ -616,8 +616,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1917567174}
-  - component: {fileID: 1917567173}
   - component: {fileID: 1917567175}
+  - component: {fileID: 1917567172}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -625,7 +625,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1917567173
+--- !u!114 &1917567172
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -634,61 +634,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1917567171}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba927d43ac5d7ed408d3ebec58f4415e, type: 3}
+  m_Script: {fileID: 11500000, guid: 8beab2f56c657ee479b711487934c827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawMode: 0
-  levelOfDetail: 3
-  noiseScale: 250
-  octaves: 2
-  persistance: 0.05
-  lacunarity: 6.25
-  seed: 0
-  offset: {x: 0, y: 0}
-  meshHeightMultiplier: 50
-  meshHeightCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  autoUpdate: 1
-  regions:
-  - name: Snow
-    height: 0.1
-    colour: {r: 1, g: 1, b: 1, a: 0}
-  - name: Rocks
-    height: 0.25
-    colour: {r: 0.14150941, g: 0.12607352, b: 0.06207724, a: 0}
-  - name: Grass
-    height: 0.4
-    colour: {r: 0, g: 1, b: 0, a: 0}
-  - name: Sand
-    height: 0.5
-    colour: {r: 0.8301887, g: 0.80410606, b: 0.70096123, a: 0}
-  - name: Water
-    height: 1
-    colour: {r: 0, g: 0.54901963, b: 1, a: 0}
-  data: {fileID: 15600000, guid: aecb381ddd1936b418f707c98b054e74, type: 2}
-  mapChunkSize: 513
+  noiseScale: 0
+  octaves: 0
+  persistance: 0
+  lacunarity: 0
+  mapChunkSize: 100
 --- !u!4 &1917567174
 Transform:
   m_ObjectHideFlags: 0
@@ -722,7 +675,6 @@ MonoBehaviour:
   centerReference: {fileID: 1514467938}
   chunkObject: {fileID: 5285406790807684777, guid: f309a91f657d16841ab6b72a4e3bf4c7,
     type: 3}
-  chunkSize: 50
 --- !u!1 &1947441086
 GameObject:
   m_ObjectHideFlags: 0

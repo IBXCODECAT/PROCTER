@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class ChunkLoader : MonoBehaviour {
@@ -7,7 +6,6 @@ public class ChunkLoader : MonoBehaviour {
 	public Transform centerReference;
 	[SerializeField] private GameObject chunkObject;
 
-	[SerializeField] private short chunkSize;
 
 	public static Vector2 center;
 	int chunksLoaded;
@@ -15,7 +13,7 @@ public class ChunkLoader : MonoBehaviour {
 	Dictionary<Vector2, TerrainChunk> terrainChunkDictionary = new Dictionary<Vector2, TerrainChunk>();
 	List<TerrainChunk> terrainChunksVisibleLastUpdate = new List<TerrainChunk>();
 
-	void Start() { chunksLoaded = Mathf.RoundToInt(renderDistance / chunkSize); }
+	void Start() { chunksLoaded = Mathf.RoundToInt(renderDistance / MapGenerator.mapChunkSize); }
 
 	void Update()
 	{
@@ -29,8 +27,8 @@ public class ChunkLoader : MonoBehaviour {
 
 		terrainChunksVisibleLastUpdate.Clear ();
 			
-		int currentChunkCoordX = Mathf.RoundToInt (center.x / chunkSize);
-		int currentChunkCoordY = Mathf.RoundToInt (center.y / chunkSize);
+		int currentChunkCoordX = Mathf.RoundToInt (center.x / MapGenerator.mapChunkSize);
+		int currentChunkCoordY = Mathf.RoundToInt (center.y / MapGenerator.mapChunkSize);
 
 		for (int yOffset = -chunksLoaded; yOffset <= chunksLoaded; yOffset++) {
 			for (int xOffset = -chunksLoaded; xOffset <= chunksLoaded; xOffset++) {
@@ -42,7 +40,7 @@ public class ChunkLoader : MonoBehaviour {
 						terrainChunksVisibleLastUpdate.Add (terrainChunkDictionary [viewedChunkCoord]);
 					}
 				} else {
-					terrainChunkDictionary.Add (viewedChunkCoord, new TerrainChunk (viewedChunkCoord, chunkSize, transform, chunkObject));
+					terrainChunkDictionary.Add (viewedChunkCoord, new TerrainChunk (viewedChunkCoord, MapGenerator.mapChunkSize, transform, chunkObject));
 				}
 
 			}
@@ -56,11 +54,29 @@ public class ChunkLoader : MonoBehaviour {
 		Bounds bounds;
 
 		public TerrainChunk(Vector2 coord, int size, Transform parent, GameObject chunk) {
+
+			Terrain mesh;
+			TerrainData meshData;
+
 			position = coord * size;
 			bounds = new Bounds(position,Vector2.one * size);
 			Vector3 positionV3 = new Vector3(position.x,0,position.y);
 
-			meshObject =  Instantiate(chunk, Vector3.zero, Quaternion.identity);
+			meshObject = Instantiate(chunk, Vector3.zero, Quaternion.identity);
+
+			if (meshObject.GetComponent<Terrain>() == null)
+			{
+				mesh = meshObject.AddComponent<Terrain>();
+			}
+			else
+            {
+				mesh = meshObject.GetComponent<Terrain>();
+            }
+
+			meshData = mesh.terrainData;
+
+			MapGenerator.GenerateMesh(coord, meshData);
+
 			meshObject.transform.position = positionV3;
 			meshObject.transform.parent = parent;
 			Loader(false);
