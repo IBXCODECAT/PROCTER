@@ -1,5 +1,5 @@
-# PROC-TERR
-## Closed Source Procedural Terrain Component
+# PROCTERR
+### Procedural Representation Of C# Terrain Executable Relient
 
 Read license file for legal information
 Repo is verified daily by IBX-depenabot
