@@ -12,7 +12,7 @@ public class GeneratorValues : MonoBehaviour
 	[SerializeField] [Range(5, 10)] [Tooltip("How much submaps overide the major key maps and thier octaves.")] private float lacunarity;
 
 	[Header("RNG Setting")]
-	public static int seed;
+	public int seed;
 
 	public static float meshHeightMultiplier;
 
