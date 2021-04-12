@@ -21,8 +21,6 @@ public static class MapGenerator
 	public static void GenerateMesh(Vector2 offset, TerrainData meshData)
     {
 		data = meshData;
-		mapChunkSize = data.heightmapResolution;
-		data.size = new Vector3(data.heightmapResolution, meshHeightMultiplier, data.heightmapResolution);
 
 		noiseMap = Noise.GenerateNoiseMap(mapChunkSize, mapChunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
 

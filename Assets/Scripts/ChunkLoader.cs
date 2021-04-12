@@ -75,7 +75,7 @@ public class ChunkLoader : MonoBehaviour {
 
 			meshData = mesh.terrainData;
 
-			MapGenerator.GenerateMesh(coord, meshData);
+			MapGenerator.GenerateMesh(coord * new Vector2(size, size), meshData);
 
 			meshObject.transform.position = positionV3;
 			meshObject.transform.parent = parent;
