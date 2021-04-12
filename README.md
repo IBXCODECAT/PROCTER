@@ -1,4 +1,4 @@
-# PROCTERR
+# PROCTER
 ### Procedural Representation Of C# Terrain Executable Relient
 
 Read license file for legal information
