@@ -8,8 +8,7 @@
 PROCTER is built for the UNITY game engine as a template project. This repo may also be forked and used as an extension to your unity projects.
 
 #### - Issues
-Feel free to report issues to the issue tracker in the issues tab, and to see thier current development state on the project board at
-https://github.com/users/IBXCODECAT/projects/1
+Feel free to report issues to the issue tracker in the issues tab, and to check thier current development status on the project board at in this repo,
 
 ---
 
