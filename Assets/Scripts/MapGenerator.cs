@@ -13,18 +13,14 @@ public static class MapGenerator
 	public static Vector2 offset;
 	public static float meshHeightMultiplier;
 	
-	public static TerrainData data;
 	static float[,] noiseMap = { };
 
 	public static int mapChunkSize;
 
 	public static void GenerateMesh(Vector2 offset, TerrainData meshData)
     {
-		data = meshData;
-
 		noiseMap = Noise.GenerateNoiseMap(mapChunkSize, mapChunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
-
-		data.SetHeights(0, 0, noiseMap);
+		meshData.SetHeights(0, 0, noiseMap);
 	}
 
 	static void OnValidate() {

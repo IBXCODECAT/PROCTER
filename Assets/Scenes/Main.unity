@@ -593,9 +593,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   noiseScale: 100
-  octaves: 1
-  persistance: 0.1
-  lacunarity: 7.5
+  octaves: 5
+  persistance: 0.0468
+  lacunarity: 10
   seed: 0
   mapChunkSize: 100
 --- !u!4 &1917567174
