@@ -572,6 +572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1917567174}
   - component: {fileID: 1917567175}
+  - component: {fileID: 1917567173}
   - component: {fileID: 1917567172}
   m_Layer: 0
   m_Name: World
@@ -598,6 +599,18 @@ MonoBehaviour:
   lacunarity: 10
   seed: 0
   mapChunkSize: 100
+--- !u!114 &1917567173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917567171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 764b64f7bc751b741829c968087872a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1917567174
 Transform:
   m_ObjectHideFlags: 0
