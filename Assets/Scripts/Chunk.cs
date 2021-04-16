@@ -16,7 +16,7 @@ public class Chunk : MonoBehaviour
 
 		meshObject = Instantiate(chunk, Vector3.zero, Quaternion.identity);
 
-		meshData = Data.TerrainDataNew(size, 513, 513, 1024);
+		meshData = meshObject.GetComponent<Terrain>().terrainData;
 
 		MapGenerator.GenerateMesh(position, meshData);
 
