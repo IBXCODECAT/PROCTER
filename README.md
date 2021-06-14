@@ -12,4 +12,8 @@ Feel free to report issues to the issue tracker in the issues tab, and to check 
 
 ---
 
-(C) 2021 IBXCODECAT
+NOTE I AM NOT GOING TO BE WORKING ON THIS FOR NOW BECAUSE I AM A BIT BORED
+
+---
+
+**(C) 2021 IBXCODECAT**
